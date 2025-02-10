@@ -1,27 +1,167 @@
 #![no_std]
 #![no_main]
 
-
-use cortex_m::asm::nop;
-use cortex_m_rt::entry;
-use embedded_hal::digital::{OutputPin, PinState};
-use nrf52833_hal::{self as hal, gpio::Level};
-use hal::pac;
 use panic_halt as _;
 
-#[entry]
-fn main () -> ! {
-    let p = pac::Peripherals::take().unwrap();
-    let port0 = hal::gpio::p0::Parts::new(p.P0);
-    let _col1 = port0.p0_28.into_push_pull_output(Level::Low);
-    let mut row1 = port0.p0_21.into_push_pull_output(Level::Low);
+use cortex_m_rt::entry;
+use embedded_hal::delay::DelayNs;
+use microbit::{board::Board, display::blocking::Display, hal::Timer};
 
-    let mut is_on: bool = false;
-    loop {
-        let _ = row1.set_state(PinState::from(is_on));
-        for _ in 0..100_000 {
-            nop();
+#[entry]
+fn main() -> ! {
+    if let Some(board) = Board::take() {
+        let mut timer = Timer::new(board.TIMER0);
+        let mut display = Display::new(board.display_pins);
+
+        #[allow(non_snake_case)]
+        let letter_I = [
+            [0, 1, 1, 1, 0],
+            [0, 0, 1, 0, 0],
+            [0, 0, 1, 0, 0],
+            [0, 0, 1, 0, 0],
+            [0, 1, 1, 1, 0],
+        ];
+
+        #[allow(non_snake_case)]
+        let letter_I_1 = [
+            [1, 1, 1, 0, 0],
+            [0, 1, 0, 0, 1],
+            [0, 1, 0, 0, 1],
+            [0, 1, 0, 0, 0],
+            [1, 1, 1, 0, 0],
+        ];
+
+        #[allow(non_snake_case)]
+        let letter_I_2 = [
+            [1, 1, 0, 0, 1],
+            [1, 0, 0, 1, 0],
+            [1, 0, 0, 1, 0],
+            [1, 0, 0, 0, 1],
+            [1, 1, 0, 0, 0],
+        ];
+
+        #[allow(non_snake_case)]
+        let letter_I_3 = [
+            [1, 0, 0, 1, 0],
+            [0, 0, 1, 0, 1],
+            [0, 0, 1, 0, 0],
+            [0, 0, 0, 1, 0],
+            [1, 0, 0, 0, 1],
+        ];
+
+        #[allow(non_snake_case)]
+        let letter_I_4 = [
+            [0, 0, 1, 0, 1],
+            [0, 1, 0, 1, 0],
+            [0, 1, 0, 0, 0],
+            [0, 0, 1, 0, 1],
+            [0, 0, 0, 1, 0],
+        ];
+
+        let heart = [
+            [0, 1, 0, 1, 0],
+            [1, 0, 1, 0, 1],
+            [1, 0, 0, 0, 1],
+            [0, 1, 0, 1, 0],
+            [0, 0, 1, 0, 0],
+        ];
+
+
+        let heart_1 = [
+            [1, 0, 1, 0, 0],
+            [0, 1, 0, 1, 0],
+            [0, 0, 0, 1, 0],
+            [1, 0, 1, 0, 0],
+            [0, 1, 0, 0, 0],
+        ];
+
+        let heart_2 = [
+            [0, 1, 0, 0, 1],
+            [1, 0, 1, 0, 1],
+            [0, 0, 1, 0, 1],
+            [0, 1, 0, 0, 1],
+            [1, 0, 0, 0, 1],
+        ];
+
+        let heart_3 = [
+            [1, 0, 0, 1, 0],
+            [0, 1, 0, 1, 1],
+            [0, 1, 0, 1, 0],
+            [1, 0, 0, 1, 0],
+            [0, 0, 0, 1, 0],
+        ];
+
+        let heart_4 = [
+            [0, 0, 1, 0, 0],
+            [1, 0, 1, 1, 0],
+            [1, 0, 1, 0, 1],
+            [0, 0, 1, 0, 0],
+            [0, 0, 1, 0, 0],
+        ];
+
+        let heart_5 = [
+            [0, 1, 0, 0, 0],
+            [0, 1, 1, 0, 1],
+            [0, 1, 0, 1, 0],
+            [0, 1, 0, 0, 0],
+            [0, 1, 0, 0, 0],
+        ];
+
+        #[allow(non_snake_case)]
+        let letter_M = [
+            [1, 0, 0, 0, 1],
+            [1, 1, 0, 1, 1],
+            [1, 0, 1, 0, 1],
+            [1, 0, 0, 0, 1],
+            [1, 0, 0, 0, 1],
+        ];
+
+        #[allow(non_snake_case)]
+        let letter_i = [
+            [0, 0, 0, 0, 0],
+            [0, 0, 1, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 1, 0, 0],
+            [0, 0, 1, 0, 0],
+        ];
+
+        #[allow(non_snake_case)]
+        let letter_r = [
+            [0, 0, 0, 0, 0],
+            [0, 1, 0, 1, 0],
+            [0, 1, 1, 0, 0],
+            [0, 1, 0, 0, 0],
+            [0, 1, 0, 0, 0],
+        ];
+
+        #[allow(non_snake_case)]
+        let letter_a = [
+            [0, 0, 0, 0, 0],
+            [0, 0, 1, 0, 0],
+            [0, 1, 0, 1, 0],
+            [0, 1, 1, 1, 0],
+            [0, 1, 0, 1, 0],
+        ];
+        loop {
+            display.show(&mut timer, letter_I, 200);
+            display.show(&mut timer, letter_I_1, 200);
+            display.show(&mut timer, letter_I_2, 200);
+            display.show(&mut timer, letter_I_3, 200);
+            display.show(&mut timer, letter_I_4, 200);
+            display.show(&mut timer, heart, 200);
+            display.show(&mut timer, heart_1, 200);
+            display.show(&mut timer, heart_2, 200);
+            display.show(&mut timer, heart_3, 200);
+            display.show(&mut timer, heart_4, 200);
+            display.show(&mut timer, heart_5, 200);
+            display.show(&mut timer, letter_M, 200);
+            display.show(&mut timer, letter_i, 1000);
+            display.show(&mut timer, letter_r, 1000);
+            display.show(&mut timer, letter_a, 1000);
+            display.clear();
+            timer.delay_ms(250_u32);
         }
-        is_on = !is_on;
     }
+
+    panic!("End");
 }
