@@ -68,41 +68,49 @@ fn main() -> ! {
             [0, 0, 1, 0, 0],
         ];
 
-
-        #[allow(non_snake_case)]
         let m_frame3= [
-            [0, 1, 0, 0, 0],
-            [0, 1, 1, 0, 1],
-            [0, 1, 0, 1, 0],
-            [0, 1, 0, 0, 0],
-            [0, 1, 0, 0, 0],
+            [0, 1, 0, 0, 1],
+            [0, 1, 0, 0, 1],
+            [0, 1, 0, 0, 1],
+            [0, 1, 0, 0, 1],
+            [0, 0, 1, 1, 0],
         ];
 
 
         #[allow(non_snake_case)]
         let m_frame4= [
-            [1, 0, 1, 0, 0],
-            [1, 0, 0, 0, 1],
-            [1, 0, 1, 0, 1],
-            [1, 0, 1, 0, 1],
-            [1, 0, 1, 0, 1],
+            [0, 0, 1, 0, 0],
+            [0, 0, 1, 1, 0],
+            [0, 0, 1, 0, 1],
+            [0, 0, 1, 0, 0],
+            [0, 0, 1, 0, 0],
         ];
+
 
         #[allow(non_snake_case)]
         let m_frame5= [
-            [0, 0, 0, 0, 0],
-            [0, 1, 0, 0, 1],
-            [1, 0, 0, 1, 0],
-            [0, 0, 0, 1, 1],
-            [0, 0, 0, 1, 0],
+            [0, 1, 0, 0, 0],
+            [1, 1, 0, 1, 0],
+            [0, 1, 0, 0, 0],
+            [0, 1, 0, 1, 0],
+            [0, 1, 0, 1, 0],
         ];
 
+        #[allow(non_snake_case)]
         let m_frame6= [
             [0, 0, 0, 0, 0],
+            [1, 0, 1, 0, 0],
+            [1, 1, 0, 0, 1],
+            [1, 0, 0, 0, 1],
+            [1, 0, 0, 0, 1],
+        ];
+
+        let m_frame7= [
             [0, 0, 0, 0, 0],
             [1, 0, 0, 0, 0],
-            [1, 0, 0, 0, 0],
-            [1, 0, 0, 0, 0],
+            [0, 1, 0, 0, 0],
+            [1, 1, 0, 0, 0],
+            [0, 1, 0, 0, 0],
         ];
 
         // Happy Valentines <3!
@@ -238,15 +246,23 @@ fn main() -> ! {
             [1, 0, 0, 0, 0],
         ];
 
+        let h_frame18= [
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+        ];
+
         // let word = [&m_frame1, &m_frame2, &m_frame3, &m_frame4, &m_frame5, &m_frame6];
-        let word = [&h_frame1, &h_frame2, &h_frame3, &h_frame4, &h_frame5, &h_frame6, &h_frame7,&h_frame8,&h_frame9,&h_frame10,&h_frame11,&h_frame12,&h_frame13,&h_frame14,&h_frame15,&h_frame16, &h_frame17];
+        let word = [&h_frame1, &h_frame2, &h_frame3, &h_frame4, &h_frame5, &h_frame6, &h_frame7,&h_frame8,&h_frame9,&h_frame10,&h_frame11,&h_frame12,&h_frame13,&h_frame14,&h_frame15,&h_frame16, &h_frame17, &h_frame18, &m_frame1, &m_frame2, &m_frame3, &m_frame4, &m_frame5, &m_frame6, &m_frame7];
 
         loop {
             for w in 0..word.len() - 1 {
                     let frames = generate_word_animation(*word[w], *word[w + 1]);
 
                     for frame in &frames {
-                        display.show(&mut timer, *frame, 200);
+                        display.show(&mut timer, *frame, 500);
                     }
                 }
             display.clear();
