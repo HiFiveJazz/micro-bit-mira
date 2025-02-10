@@ -8,13 +8,51 @@ use embedded_hal::delay::DelayNs;
 use microbit::{board::Board, display::blocking::Display, hal::Timer};
 
 #[entry]
+
 fn main() -> ! {
+
+
+    fn merge_letters(
+        left: &[[u8; 5]; 5], 
+        right: &[[u8; 5]; 5], 
+        shift: usize
+    ) -> [[u8; 5]; 5] {
+        let mut new_matrix = [[0; 5]; 5];
+
+        for row in 0..5 {
+            for col in 0..5 {
+                if col < (5 - shift) {
+                    new_matrix[row][col] = left[row][col + shift]; // Shift old letter out
+                } else {
+                    new_matrix[row][col] = right[row][col - (5 - shift)]; // Shift new letter in
+                }
+            }
+        }
+        
+        new_matrix
+    }
+
+    const TRANSITION_STEPS: usize = 5;
+
+    fn generate_word_animation(
+        current: [[u8; 5]; 5], 
+        next: [[u8; 5]; 5]
+    ) -> [[[u8; 5]; 5]; TRANSITION_STEPS] {
+        let mut frames = [[[0; 5]; 5]; TRANSITION_STEPS];
+
+        for shift in 0..TRANSITION_STEPS {
+            frames[shift] = merge_letters(&current, &next, shift);
+        }
+
+        frames
+    }
+
     if let Some(board) = Board::take() {
         let mut timer = Timer::new(board.TIMER0);
         let mut display = Display::new(board.display_pins);
 
         #[allow(non_snake_case)]
-        let letter_I = [
+        let m_frame1 = [
             [0, 1, 1, 1, 0],
             [0, 0, 1, 0, 0],
             [0, 0, 1, 0, 0],
@@ -22,43 +60,7 @@ fn main() -> ! {
             [0, 1, 1, 1, 0],
         ];
 
-        #[allow(non_snake_case)]
-        let letter_I_1 = [
-            [1, 1, 1, 0, 0],
-            [0, 1, 0, 0, 1],
-            [0, 1, 0, 0, 1],
-            [0, 1, 0, 0, 0],
-            [1, 1, 1, 0, 0],
-        ];
-
-        #[allow(non_snake_case)]
-        let letter_I_2 = [
-            [1, 1, 0, 0, 1],
-            [1, 0, 0, 1, 0],
-            [1, 0, 0, 1, 0],
-            [1, 0, 0, 0, 1],
-            [1, 1, 0, 0, 0],
-        ];
-
-        #[allow(non_snake_case)]
-        let letter_I_3 = [
-            [1, 0, 0, 1, 0],
-            [0, 0, 1, 0, 1],
-            [0, 0, 1, 0, 0],
-            [0, 0, 0, 1, 0],
-            [1, 0, 0, 0, 1],
-        ];
-
-        #[allow(non_snake_case)]
-        let letter_I_4 = [
-            [0, 0, 1, 0, 1],
-            [0, 1, 0, 1, 0],
-            [0, 1, 0, 0, 0],
-            [0, 0, 1, 0, 1],
-            [0, 0, 0, 1, 0],
-        ];
-
-        let heart = [
+        let m_frame2= [
             [0, 1, 0, 1, 0],
             [1, 0, 1, 0, 1],
             [1, 0, 0, 0, 1],
@@ -67,39 +69,8 @@ fn main() -> ! {
         ];
 
 
-        let heart_1 = [
-            [1, 0, 1, 0, 0],
-            [0, 1, 0, 1, 0],
-            [0, 0, 0, 1, 0],
-            [1, 0, 1, 0, 0],
-            [0, 1, 0, 0, 0],
-        ];
-
-        let heart_2 = [
-            [0, 1, 0, 0, 1],
-            [1, 0, 1, 0, 1],
-            [0, 0, 1, 0, 1],
-            [0, 1, 0, 0, 1],
-            [1, 0, 0, 0, 1],
-        ];
-
-        let heart_3 = [
-            [1, 0, 0, 1, 0],
-            [0, 1, 0, 1, 1],
-            [0, 1, 0, 1, 0],
-            [1, 0, 0, 1, 0],
-            [0, 0, 0, 1, 0],
-        ];
-
-        let heart_4 = [
-            [0, 0, 1, 0, 0],
-            [1, 0, 1, 1, 0],
-            [1, 0, 1, 0, 1],
-            [0, 0, 1, 0, 0],
-            [0, 0, 1, 0, 0],
-        ];
-
-        let heart_5 = [
+        #[allow(non_snake_case)]
+        let m_frame3= [
             [0, 1, 0, 0, 0],
             [0, 1, 1, 0, 1],
             [0, 1, 0, 1, 0],
@@ -107,57 +78,35 @@ fn main() -> ! {
             [0, 1, 0, 0, 0],
         ];
 
+
         #[allow(non_snake_case)]
-        let letter_M = [
-            [1, 0, 0, 0, 1],
-            [1, 1, 0, 1, 1],
+        let m_frame4= [
+            [1, 0, 1, 0, 0],
+            [1, 0, 0, 0, 0],
             [1, 0, 1, 0, 1],
-            [1, 0, 0, 0, 1],
-            [1, 0, 0, 0, 1],
+            [1, 0, 1, 0, 1],
+            [1, 0, 1, 0, 1],
         ];
 
         #[allow(non_snake_case)]
-        let letter_i = [
+        let m_frame5= [
             [0, 0, 0, 0, 0],
-            [0, 0, 1, 0, 0],
-            [0, 0, 0, 0, 0],
-            [0, 0, 1, 0, 0],
-            [0, 0, 1, 0, 0],
-        ];
-
-        #[allow(non_snake_case)]
-        let letter_r = [
-            [0, 0, 0, 0, 0],
-            [0, 1, 0, 1, 0],
-            [0, 1, 1, 0, 0],
+            [1, 0, 0, 0, 0],
             [0, 1, 0, 0, 0],
+            [1, 1, 0, 0, 0],
             [0, 1, 0, 0, 0],
         ];
 
-        #[allow(non_snake_case)]
-        let letter_a = [
-            [0, 0, 0, 0, 0],
-            [0, 0, 1, 0, 0],
-            [0, 1, 0, 1, 0],
-            [0, 1, 1, 1, 0],
-            [0, 1, 0, 1, 0],
-        ];
+        let word = [&m_frame1, &m_frame2, &m_frame3, &m_frame4, &m_frame5];
+
         loop {
-            display.show(&mut timer, letter_I, 200);
-            display.show(&mut timer, letter_I_1, 200);
-            display.show(&mut timer, letter_I_2, 200);
-            display.show(&mut timer, letter_I_3, 200);
-            display.show(&mut timer, letter_I_4, 200);
-            display.show(&mut timer, heart, 200);
-            display.show(&mut timer, heart_1, 200);
-            display.show(&mut timer, heart_2, 200);
-            display.show(&mut timer, heart_3, 200);
-            display.show(&mut timer, heart_4, 200);
-            display.show(&mut timer, heart_5, 200);
-            display.show(&mut timer, letter_M, 200);
-            display.show(&mut timer, letter_i, 1000);
-            display.show(&mut timer, letter_r, 1000);
-            display.show(&mut timer, letter_a, 1000);
+            for w in 0..word.len() - 1 {
+                    let frames = generate_word_animation(*word[w], *word[w + 1]);
+
+                    for frame in &frames {
+                        display.show(&mut timer, *frame, 100);
+                    }
+                }
             display.clear();
             timer.delay_ms(250_u32);
         }
